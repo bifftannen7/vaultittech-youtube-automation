@@ -1,17 +1,18 @@
 // Vaultittech YouTube Dynamic Title Automator
 // Production-ready version for Railway deployment
+// Fixed to load environment variables at runtime, not build time
 
 const axios = require('axios');
 
 class VaultittechAutomator {
     constructor() {
-        // Load credentials from environment variables
-        this.youtubeApiKey = process.env.YOUTUBE_API_KEY;
-        this.clientId = process.env.OAUTH_CLIENT_ID;
-        this.clientSecret = process.env.OAUTH_CLIENT_SECRET;
-        this.refreshToken = process.env.REFRESH_TOKEN;
-        
-        this.channelId = process.env.CHANNEL_ID;
+        // Don't load credentials during construction (build time)
+        // This prevents Railway build errors
+        this.youtubeApiKey = null;
+        this.clientId = null;
+        this.clientSecret = null;
+        this.refreshToken = null;
+        this.channelId = null;
         this.accessToken = null;
         this.accessTokenExpiry = null;
         
@@ -23,9 +24,19 @@ class VaultittechAutomator {
         };
         
         console.log('🚀 Vaultittech YouTube Automator initialized');
-        console.log('📊 Monitoring environment variables...');
+    }
+
+    // Load credentials at runtime, not build time
+    loadCredentials() {
+        console.log('📊 Loading environment variables...');
         
-        // Check if all required environment variables are present
+        this.youtubeApiKey = process.env.YOUTUBE_API_KEY;
+        this.clientId = process.env.OAUTH_CLIENT_ID;
+        this.clientSecret = process.env.OAUTH_CLIENT_SECRET;
+        this.refreshToken = process.env.REFRESH_TOKEN;
+        this.channelId = process.env.CHANNEL_ID;
+        
+        // Validate that all required credentials are present
         this.validateEnvironment();
     }
 
@@ -341,6 +352,9 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Initialize and start the automation
 const automator = new VaultittechAutomator();
+
+// Load credentials at runtime (after build completes)
+automator.loadCredentials();
 
 // Start automation with 5-minute intervals
 automator.startAutomation(config.videos, 5, 'auto');
