@@ -358,9 +358,3 @@ automator.loadCredentials();
 
 // Start automation with 5-minute intervals
 automator.startAutomation(config.videos, 5, 'auto');
-
-// Log performance every hour
-setInterval(() => {
-    const report = automator.getPerformanceReport();
-    console.log('\n📈 Performance Report:', report);
-}, 60 * 60 * 1000);
