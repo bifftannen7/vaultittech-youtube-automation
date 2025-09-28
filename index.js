@@ -329,18 +329,7 @@ class VaultittechAutomator {
     }
 }
 
-// Configuration from environment variables
-const config = {
-    videos: [
-        {
-            videoId: process.env.VIDEO_ID || 'YOUR_VIDEO_ID_HERE',
-            originalTitle: process.env.ORIGINAL_TITLE || 'Building Vaultittech: Real-Time Revenue Tracking'
-        }
-        // Add more videos by setting VIDEO_ID_2, ORIGINAL_TITLE_2, etc.
-    ]
-};
-
-// Graceful shutdown handling for Railway
+// Graceful shutdown handling
 process.on('SIGTERM', () => {
     console.log('Received SIGTERM, shutting down gracefully');
     process.exit(0);
@@ -355,6 +344,16 @@ const automator = new VaultittechAutomator();
 
 // Load credentials at runtime (after build completes)
 automator.loadCredentials();
+
+// Create config at runtime, not build time
+const config = {
+    videos: [
+        {
+            videoId: process.env.VIDEO_ID || 'YOUR_VIDEO_ID_HERE',
+            originalTitle: process.env.ORIGINAL_TITLE || 'Building Vaultittech: Real-Time Revenue Tracking'
+        }
+    ]
+};
 
 // Start automation with 5-minute intervals
 automator.startAutomation(config.videos, 5, 'auto');
