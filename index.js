@@ -120,67 +120,12 @@ class VaultittechAutomator {
         }
     }
 
-    generateDynamicTitle(stats, originalTitle, strategy = 'auto') {
-        const views = stats.views.toLocaleString();
-        const likes = stats.likes.toLocaleString();
-        const comments = stats.comments.toLocaleString();
-        
-        const templates = {
-            authority: [
-                `${views} Developers Can't Be Wrong: ${originalTitle}`,
-                `Tech Secret That Got ${views} Views: ${originalTitle}`,
-                `${views} People Learned: ${originalTitle}`,
-                `Industry Secret: ${originalTitle} (${views} views and counting)`
-            ],
-            
-            socialProof: [
-                `${originalTitle} - ${likes} People LOVED This Method`,
-                `VIRAL: ${originalTitle} (${views} views, ${likes} likes)`,
-                `${originalTitle} | ${comments} Success Stories in Comments`,
-                `${views} Views Later: ${originalTitle} Still Works`
-            ],
-            
-            urgency: [
-                `TRENDING: ${originalTitle} (${views} watching now)`,
-                `${originalTitle} - Before It Gets ${parseInt(stats.views/1000)}K Views`,
-                `LIVE Numbers: ${originalTitle} | ${views} views`,
-                `${originalTitle} (Update: ${views} people tried this)`
-            ],
-            
-            success: [
-                `How ${originalTitle} Made $200+/Month Passive (${views} views)`,
-                `${originalTitle}: Real Results (${views} views, ${likes} likes)`,
-                `${views} People Saw: ${originalTitle} - Here's What Happened`,
-                `${originalTitle} | ${comments} People Sharing Results`
-            ]
-        };
-
-        let selectedCategory;
-        
-        if (strategy === 'auto') {
-            if (stats.views > 10000 && stats.likeRatio > 0.02) {
-                selectedCategory = 'socialProof';
-            } else if (stats.views > 5000 && stats.commentRatio > 0.01) {
-                selectedCategory = 'success';
-            } else if (stats.views < 1000) {
-                selectedCategory = 'urgency';
-            } else {
-                selectedCategory = 'authority';
-            }
-        } else {
-            selectedCategory = strategy;
-        }
-
-        const categoryTemplates = templates[selectedCategory] || templates.authority;
-        const randomTemplate = categoryTemplates[Math.floor(Math.random() * categoryTemplates.length)];
-        
-        return randomTemplate.length <= 100 ? randomTemplate : 
-            randomTemplate.substring(0, 97) + '...';
-    }
-
-    async updateVideoTitle(videoId, newTitle, currentStats) {
-        await this.ensureValidAccessToken();
-
+    const views = stats.views.toLocaleString();
+    const likes = stats.likes.toLocaleString();
+    const comments = stats.comments.toLocaleString();
+    
+    return `Vaultittech Revenue Tracker | ${views} views, ${likes} likes, ${comments} comments`;
+}
         try {
             const currentVideo = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
                 params: {
