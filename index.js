@@ -120,12 +120,17 @@ class VaultittechAutomator {
         }
     }
 
-    const views = stats.views.toLocaleString();
-    const likes = stats.likes.toLocaleString();
-    const comments = stats.comments.toLocaleString();
-    
-    return `Vaultittech Revenue Tracker | ${views} views, ${likes} likes, ${comments} comments`;
-}
+    generateDynamicTitle(stats, originalTitle, strategy = 'auto') {
+        const views = stats.views.toLocaleString();
+        const likes = stats.likes.toLocaleString();
+        const comments = stats.comments.toLocaleString();
+        
+        return `Vaultittech Revenue Tracker | ${views} views, ${likes} likes, ${comments} comments`;
+    }
+
+    async updateVideoTitle(videoId, newTitle, currentStats) {
+        await this.ensureValidAccessToken();
+
         try {
             const currentVideo = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
                 params: {
@@ -302,3 +307,9 @@ const config = {
 
 // Start automation with 5-minute intervals
 automator.startAutomation(config.videos, 5, 'auto');
+
+// Log performance every hour
+setInterval(() => {
+    const report = automator.getPerformanceReport();
+    console.log('\n📈 Performance Report:', report);
+}, 60 * 60 * 1000);
