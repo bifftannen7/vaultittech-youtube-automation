@@ -125,7 +125,22 @@ class VaultittechAutomator {
         const likes = stats.likes.toLocaleString();
         const comments = stats.comments.toLocaleString();
         
-        return `Vaultittech Revenue Tracker | ${views} views, ${likes} likes, ${comments} comments`;
+        const templates = {
+            detailed: [
+                `This video now has ${views} views, ${likes} likes, and ${comments} comments - ${originalTitle}`,
+                `${originalTitle} | This video now has ${views} views, ${likes} likes, ${comments} comments`,
+                `This video now has ${views} views, ${likes} likes, ${comments} comments: ${originalTitle}`
+            ]
+        };
+
+        // Always use detailed format
+        const selectedCategory = 'detailed';
+        const categoryTemplates = templates[selectedCategory];
+        const randomTemplate = categoryTemplates[Math.floor(Math.random() * categoryTemplates.length)];
+        
+        // Ensure title stays within YouTube's 100 character limit
+        return randomTemplate.length <= 100 ? randomTemplate : 
+            randomTemplate.substring(0, 97) + '...';
     }
 
     async updateVideoTitle(videoId, newTitle, currentStats) {
@@ -279,7 +294,18 @@ class VaultittechAutomator {
     }
 }
 
-// Graceful shutdown handling
+// Configuration from environment variables
+const config = {
+    videos: [
+        {
+            videoId: process.env.VIDEO_ID || 'YOUR_VIDEO_ID_HERE',
+            originalTitle: process.env.ORIGINAL_TITLE || 'Building Vaultittech: Real-Time Revenue Tracking'
+        }
+        // Add more videos by setting VIDEO_ID_2, ORIGINAL_TITLE_2, etc.
+    ]
+};
+
+// Graceful shutdown handling for Railway
 process.on('SIGTERM', () => {
     console.log('Received SIGTERM, shutting down gracefully');
     process.exit(0);
@@ -294,16 +320,6 @@ const automator = new VaultittechAutomator();
 
 // Load credentials at runtime (after build completes)
 automator.loadCredentials();
-
-// Create config at runtime, not build time
-const config = {
-    videos: [
-        {
-            videoId: process.env.VIDEO_ID || 'YOUR_VIDEO_ID_HERE',
-            originalTitle: process.env.ORIGINAL_TITLE || 'Building Vaultittech: Real-Time Revenue Tracking'
-        }
-    ]
-};
 
 // Start automation with 5-minute intervals
 automator.startAutomation(config.videos, 5, 'auto');
